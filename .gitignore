@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+frontend/.env.local
+backend/*firebase*.json
+vendor/
+node_modules/
+dist/
+.runtime/
+storage/*.key
+storage/app/public/
+.phpunit.result.cache
+.DS_Store
