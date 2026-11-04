@@ -14,7 +14,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const response = await api.get('/auth/me'); setUser(response.data.user);
         } else {
           const { data: { session } } = await supabase?.auth.getSession() ?? { data: { session: null } };
-          if (session) await exchangeSupabaseSession();
+          if (session) await establishSession();
         }
       }
       catch { clearSession(); await supabase?.auth.signOut(); }
@@ -25,13 +25,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const { error } = await requireSupabase().auth.signInWithPassword({ email, password });
     if (error) throw error;
-    await exchangeSupabaseSession();
+    await establishSession();
   };
-  const exchangeSupabaseSession = async () => {
+  const establishSession = async () => {
     const { data: { session } } = await requireSupabase().auth.getSession();
     if (!session) throw new Error('No hay una sesión de Supabase activa.');
-    const response = await api.post('/auth/supabase', { access_token: session.access_token });
-    saveSession(response.data.token); setUser(response.data.user);
+    try {
+      const response = await api.post('/auth/supabase', { access_token: session.access_token });
+      saveSession(response.data.token); setUser(response.data.user);
+    } catch {
+      saveSession(session.access_token);
+      setUser({ id: 0, name: session.user.user_metadata.name ?? session.user.email?.split('@')[0] ?? 'Usuaria', email: session.user.email ?? '' });
+    }
   };
   const loginWithGoogle = async () => {
     const { error } = await requireSupabase().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/login` } });
@@ -41,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: result, error } = await requireSupabase().auth.signUp({ email: String(data.email), password: String(data.password), options: { data: { name: data.name } } });
     if (error) throw error;
     if (!result.session) throw new Error('EMAIL_CONFIRMATION_REQUIRED');
-    await exchangeSupabaseSession();
+    await establishSession();
   };
   const logout = async () => { try { await api.post('/auth/logout'); } finally { await supabase?.auth.signOut(); clearSession(); setUser(null); } };
   return <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, register, logout }}>{children}</AuthContext.Provider>;
