@@ -11,18 +11,11 @@ composer require php-open-source-saver/jwt-auth
 
 No ejecutar esos comandos hasta disponer de PHP y Composer compatibles.
 
-## Firestore
+## Supabase
 
-Instala el adaptador de Firebase Admin:
-
-```bash
-composer require kreait/laravel-firebase
-```
-
-Configura `FIREBASE_PROJECT_ID` y `FIREBASE_CREDENTIALS` en `.env`. La credencial debe
-ser el JSON de una cuenta de servicio fuera del repositorio; nunca la envíes al frontend.
-Los usuarios de JWT continúan en el provider de Laravel y los reportes se guardan en la
-colección Firestore `reports`.
+Configura `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `SUPABASE_REPORTS_TABLE` en `.env`.
+La clave `service_role` solo debe existir en el backend. Ejecuta `docs/supabase.sql` en el
+SQL Editor de Supabase antes de crear reportes.
 
 ## Contrato MVP
 

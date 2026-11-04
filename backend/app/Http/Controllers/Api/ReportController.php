@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
-use App\Services\FirestoreReportService;
+use App\Services\SupabaseReportService;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function __construct(private readonly FirestoreReportService $reports) {}
+    public function __construct(private readonly SupabaseReportService $reports) {}
 
     public function index(Request $request)
     {
@@ -34,5 +34,5 @@ class ReportController extends Controller
         $report = $this->reports->create($request->validated(), $request->user()->id);
         return response()->json(['message' => 'Reporte recibido para revisión.', 'report' => $report], 201);
     }
-    public function mine(Request $request) { return response()->json(['data' => []]); }
+    public function mine(Request $request) { return response()->json(['data' => $this->reports->mine($request->user()->id)]); }
 }

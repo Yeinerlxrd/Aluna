@@ -2,7 +2,6 @@
 .env.*
 !.env.example
 frontend/.env.local
-backend/*firebase*.json
 vendor/
 node_modules/
 dist/

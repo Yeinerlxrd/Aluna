@@ -1,6 +1,5 @@
 {
     "require": {
-        "php-open-source-saver/jwt-auth": "^2.9",
-        "kreait/firebase-php": "^7.0"
+        "php-open-source-saver/jwt-auth": "^2.9"
     }
 }

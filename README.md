@@ -37,6 +37,23 @@ npm install
 npm run dev
 ```
 
+## Despliegue rápido en Render
+
+El archivo `render.yaml` crea el servicio web y el frontend estático. En Render importa
+el repositorio `Yeinerlxrd/Aluna` como Blueprint y configura las variables marcadas como
+`sync: false`. En el frontend usa la URL pública del API, por ejemplo
+`https://aluna-api.onrender.com/api`.
+
+En Supabase ejecuta primero `docs/supabase.sql`. En Authentication > URL Configuration
+agrega la URL pública de `aluna-web` a Site URL y Redirect URLs.
+
+## Supabase y mapas
+
+La autenticación, Google OAuth y los reportes usan Supabase. Configura
+`VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el frontend, y
+`SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` únicamente en el backend.
+Ejecuta [docs/supabase.sql](docs/supabase.sql) en el SQL Editor de Supabase.
+
 ## Mapas y claves API
 
 El MVP usa OpenStreetMap mediante React Leaflet, por lo que no necesita una clave de Google Maps
@@ -60,7 +77,7 @@ Alternativas con cuenta y claves para producción:
 - [HERE Developer](https://developer.here.com/) — mapas, rutas y búsqueda.
 - [TomTom Developer](https://developer.tomtom.com/user/me/apps) — mapas, rutas y búsqueda.
 
-No se necesita ninguna de esas claves para la demo actual. Si se usa un proveedor externo,
-la clave debe restringirse por dominio, guardarse en `.env.local` y no subirse a Git.
+MapTiler se configura con `VITE_MAPTILER_API_KEY` en `.env.local`; nunca subas esa variable
+al repositorio. La clave compartida en el chat debe rotarse antes de producción.
 
 Consulta [`docs/arquitectura.md`](docs/arquitectura.md) para el plan técnico.

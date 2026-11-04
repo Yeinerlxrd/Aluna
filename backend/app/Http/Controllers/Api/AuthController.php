@@ -8,8 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Exception\Auth\FailedToVerifyToken;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -26,22 +25,17 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-    public function google(Request $request)
+    public function supabase(Request $request)
     {
-        $validated = $request->validate(['id_token' => ['required', 'string']]);
-
-        try {
-            $auth = (new Factory())
-                ->withServiceAccount(config('firebase.credentials'))
-                ->withProjectId(config('firebase.project_id'))
-                ->createAuth();
-            $firebaseUser = $auth->verifyIdToken($validated['id_token'])->claims();
-        } catch (FailedToVerifyToken $exception) {
-            return response()->json(['message' => 'El token de Google no es válido.'], 401);
-        }
-
-        $email = $firebaseUser->get('email');
-        $name = $firebaseUser->get('name') ?: Str::before($email, '@');
+        $validated = $request->validate(['access_token' => ['required', 'string']]);
+        $response = Http::withHeaders([
+            'apikey' => config('supabase.service_role_key'),
+            'Authorization' => 'Bearer ' . $validated['access_token'],
+        ])->get(rtrim(config('supabase.url'), '/') . '/auth/v1/user');
+        if ($response->failed()) return response()->json(['message' => 'La sesión de Supabase no es válida.'], 401);
+        $supabaseUser = $response->json();
+        $email = $supabaseUser['email'] ?? null;
+        $name = $supabaseUser['user_metadata']['name'] ?? Str::before((string) $email, '@');
         if (!$email) return response()->json(['message' => 'La cuenta de Google no tiene email.'], 422);
 
         $user = User::firstOrCreate(

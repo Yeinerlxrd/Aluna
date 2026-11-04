@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: aluna-api
+    runtime: php
+    rootDir: backend-app
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_REPORTS_TABLE
+        value: reports
+
+  - type: web
+    name: aluna-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_MAPTILER_API_KEY
+        sync: false
+      - key: VITE_MAPTILER_MAP_ID
+        value: streets
+      - key: VITE_OSRM_URL
+        value: https://router.project-osrm.org
+      - key: VITE_OVERPASS_URL
+        value: https://overpass-api.de/api/interpreter
+      - key: VITE_OVERPASS_FALLBACK_URL
+        value: https://overpass.kumi.systems/api/interpreter
