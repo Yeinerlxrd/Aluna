@@ -1,0 +1,6 @@
+id,name,department,country,created_at,updated_at
+1,Bogotá D.C.,Bogotá D.C.,CO,2026-11-04T00:00:00Z,2026-11-04T00:00:00Z
+2,Medellín,Antioquia,CO,2026-11-04T00:00:00Z,2026-11-04T00:00:00Z
+3,Cali,Valle del Cauca,CO,2026-11-04T00:00:00Z,2026-11-04T00:00:00Z
+4,Barranquilla,Atlántico,CO,2026-11-04T00:00:00Z,2026-11-04T00:00:00Z
+5,Cartagena,Bolívar,CO,2026-11-04T00:00:00Z,2026-11-04T00:00:00Z
