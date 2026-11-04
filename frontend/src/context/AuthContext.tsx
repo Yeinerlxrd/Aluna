@@ -38,8 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
   const register = async (data: Record<string, unknown>) => {
-    const { error } = await requireSupabase().auth.signUp({ email: String(data.email), password: String(data.password), options: { data: { name: data.name } } });
+    const { data: result, error } = await requireSupabase().auth.signUp({ email: String(data.email), password: String(data.password), options: { data: { name: data.name } } });
     if (error) throw error;
+    if (!result.session) throw new Error('EMAIL_CONFIRMATION_REQUIRED');
     await exchangeSupabaseSession();
   };
   const logout = async () => { try { await api.post('/auth/logout'); } finally { await supabase?.auth.signOut(); clearSession(); setUser(null); } };
